@@ -5,16 +5,20 @@ import { CategoriaModule } from  './categoria/categoria.module'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {PeliculaModule} from "./pelicula/pelicula.module";
+import { IdiomaComponent } from './idioma/idioma';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    IdiomaComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgbModule,
     CategoriaModule,
+    PeliculaModule,
     HttpClientModule
   ],
   providers: [],
