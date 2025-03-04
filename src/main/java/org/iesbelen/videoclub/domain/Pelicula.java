@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "idPelicula") // Para que funcione la colección Set<Pelicula> en Categoria
 public class Pelicula {
 
     @Id
@@ -36,33 +38,16 @@ public class Pelicula {
     @JoinColumn(name = "id_idioma", nullable = false)
     private Idioma idioma;
 
-    @ManyToOne()
-    @JoinColumn(name = "id_idioma_original")
-    private Idioma idiomaOriginal;
-
-    @Column(name = "duracion_alquiler")
-    private int duracionAlquiler;
-
-    @Column(name = "rental_rate")
-    private BigDecimal rentalRate;
     private int duracion;
 
-    @Column(name = "replacement_cost")
-    private BigDecimal replacementCost;
-    private String clasificacion;
 
-    @Column(name = "caracteristicas_especiales")
-    private String caracteristicasEspeciales;
-
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "pelicula_categoria",
             joinColumns = @JoinColumn(name = "id_pelicula", referencedColumnName = "id_pelicula"),
             inverseJoinColumns = @JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria"))
     Set<Categoria> categorias = new HashSet<>();
 
-    @Column(name = "ultima_actualizacion")
-    @JsonFormat(pattern = "yyyy-MM-dd-HH:mm:ss",  shape = JsonFormat.Shape.STRING)
-    private Date ultimaActualizacion;
+
 
 }

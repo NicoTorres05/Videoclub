@@ -3,8 +3,10 @@ package org.iesbelen.videoclub.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NaturalId;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -16,12 +18,14 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Socio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_socio")
     private long id;
 
+    @NaturalId
     private String dni;
 
     private String nombre;
