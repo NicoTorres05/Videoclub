@@ -1,19 +1,34 @@
 package org.iesbelen.videoclub.service;
 
+import org.iesbelen.videoclub.domain.Categoria;
 import org.iesbelen.videoclub.exception.PeliculaNotFoundException;
+import org.iesbelen.videoclub.repository.PeliculaCustomRepository;
 import org.iesbelen.videoclub.repository.PeliculaRepository;
 import org.iesbelen.videoclub.domain.Pelicula;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class PeliculaService {
 
     private final PeliculaRepository peliculaRepository;
 
-    public PeliculaService(PeliculaRepository peliculaRepository) {
+    @Autowired
+    private PeliculaCustomRepository peliculaCustomRepository;
 
+    @Autowired
+    private CategoriaService categoriaService;
+
+    public PeliculaService(PeliculaRepository peliculaRepository) {
         this.peliculaRepository = peliculaRepository;
     }
 
@@ -31,17 +46,66 @@ public class PeliculaService {
     }
 
     public Pelicula replace(Long id, Pelicula pelicula) {
-
         return this.peliculaRepository.findById(id).map( p -> (id.equals(pelicula.getIdPelicula())  ?
-                                                            this.peliculaRepository.save(pelicula) : null))
+                        this.peliculaRepository.save(pelicula) : null))
                 .orElseThrow(() -> new PeliculaNotFoundException(id));
-
     }
 
     public void delete(Long id) {
-        this.peliculaRepository.findById(id).map(p -> {this.peliculaRepository.delete(p);
-                                                        return p;})
+        this.peliculaRepository.findById(id).map(p -> { this.peliculaRepository.delete(p);
+                    return p; })
                 .orElseThrow(() -> new PeliculaNotFoundException(id));
     }
 
+    public List<Pelicula> findAllByOrderByTituloAsc() {
+        return this.peliculaRepository.findAllOrderByTituloAsc();
+    }
+
+    public List<Pelicula> findAllByQueryFilters(Optional<String> buscarOptional, Optional<String> ordenarOptional) {
+        return this.peliculaCustomRepository.queryCustomPelicula(buscarOptional, ordenarOptional);
+    }
+
+    public List<Pelicula> findAllOrderByCol(String[] orden) {
+        Sort sort = null;
+        if (orden.length == 2) {
+            String columna = orden[0], sentido = orden[1];
+            if ("desc".equalsIgnoreCase(sentido)) { sort = Sort.by(columna).descending(); }
+            if ("asc".equalsIgnoreCase(sentido)) { sort = Sort.by(columna).ascending(); }
+        }
+        if (orden.length == 1) {
+            String columna = orden[0];
+            sort = Sort.by(columna).ascending();
+        }
+        return peliculaRepository.findAll(sort);
+    }
+
+    // Para ordenar por dos columnas
+    public List<Pelicula> findAllOrderByCols(String[] orden) {
+        return this.peliculaCustomRepository.pelisOrderByCols(Optional.of(orden));
+    }
+
+    public Pelicula addCategoria(Long id, Long idCategoria) {
+        Pelicula pelicula = one(id);
+        Categoria categoria = categoriaService.one(idCategoria);
+
+        pelicula.getCategorias().add(categoria);
+        categoria.getPeliculas().add(pelicula);
+
+        return save(pelicula);
+    }
+
+    public Map<String, Object> all(String[] paginacion) {
+        Pageable paginado = PageRequest.of(Integer.parseInt(paginacion[0]),Integer.parseInt(paginacion[1]), Sort.by("idPelicula").ascending());
+
+        Page<Pelicula> pageAll = this.peliculaRepository.findAll(paginado);
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("peliculas", pageAll.getContent());
+        response.put("currentPage", pageAll.getNumber());
+        response.put("totalItems", pageAll.getTotalElements());
+        response.put("totalPages", pageAll.getTotalPages());
+
+        return response;
+    }
 }

@@ -1,7 +1,7 @@
 package org.iesbelen.videoclub.exception;
 
 public class IdiomaNotFoundException extends RuntimeException {
-  public IdiomaNotFoundException(String message) {
+  public IdiomaNotFoundException(Long message) {
     super(message);
   }
 }
