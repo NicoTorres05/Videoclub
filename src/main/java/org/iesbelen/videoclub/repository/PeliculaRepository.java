@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface PeliculaRepository extends JpaRepository<Pelicula, Long> {
-    public List<Pelicula> findAllOrderByTituloAsc();
+    public List<Pelicula> findAllByOrderByTituloAsc();
 }

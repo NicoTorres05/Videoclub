@@ -42,8 +42,7 @@ public class Pelicula {
 
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "pelicula_categoria",
+    @JoinTable(name = "pelicula_categoria",
             joinColumns = @JoinColumn(name = "id_pelicula", referencedColumnName = "id_pelicula"),
             inverseJoinColumns = @JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria"))
     Set<Categoria> categorias = new HashSet<>();

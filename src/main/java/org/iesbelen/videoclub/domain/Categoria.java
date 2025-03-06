@@ -1,12 +1,11 @@
 package org.iesbelen.videoclub.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.annotations.NaturalId;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -18,23 +17,22 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "nombre")
 @Builder
-
 public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_categoria")
     private long id;
+
+
+    @NaturalId
+    @NotBlank
     private String nombre;
 
-    @ManyToMany(
-            mappedBy = "categorias")
     @JsonIgnore
+    @ManyToMany(mappedBy = "categorias")
+    @ToString.Exclude
     Set<Pelicula> peliculas = new HashSet<>();
-
-    @Column(name = "ultima_actualizacion")
-    @JsonFormat(pattern = "yyyy-MM-dd-HH:mm:ss",  shape = JsonFormat.Shape.STRING)
-    private Date ultimaActualizacion;
 
 
     @Override

@@ -39,7 +39,7 @@ public class PeliculaController {
         return this.peliculaService.findAllByOrderByTituloAsc();
     }
 
-    @PostMapping(value = {"","/"}, params = {"!paginado", "!orden"})
+    @GetMapping(value = {"","/"}, params = {"!paginado", "!orden"})
     public List<Pelicula> all(@RequestParam("buscar") Optional<String> buscarOptional,
                               @RequestParam("ordenar") Optional<String> ordenarOptional) {
 

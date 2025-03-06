@@ -58,7 +58,7 @@ public class PeliculaService {
     }
 
     public List<Pelicula> findAllByOrderByTituloAsc() {
-        return this.peliculaRepository.findAllOrderByTituloAsc();
+        return this.peliculaRepository.findAllByOrderByTituloAsc();
     }
 
     public List<Pelicula> findAllByQueryFilters(Optional<String> buscarOptional, Optional<String> ordenarOptional) {
